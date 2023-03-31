@@ -1,12 +1,13 @@
 import React ,{useRef, useState} from "react";
 import { Form, FormControl, FormGroup, FormLabel,Card,Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 const SignUpForm = () => {
    const [successful,isSuccessful]=useState(false)
    const [error,setError]=useState(false)
    const email=useRef()
    const password=useRef()
    const confirm=useRef()
-
+  const navigate=useNavigate()
 
     const submitHandler=async(event)=>{
       event.preventDefault()
@@ -35,9 +36,10 @@ const SignUpForm = () => {
           if(res.ok)
           {
             isSuccessful(true)
-          emailValue.current.value =""
-          password.current.value=""
-          confirm.current.value=""
+            setTimeout(()=>{
+              navigate('/login')
+            },1000)
+            
             return res.json()
             
             
