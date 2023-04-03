@@ -1,10 +1,11 @@
-import React,{useRef} from 'react'
+import React,{useRef, useState} from 'react'
 import { Button, Card, Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 
 
 
 const LoginForm = () => {
+    const [login,setLogin]=useState(false)
     const email=useRef('')
     const password=useRef('')
     const navigate=useNavigate()
@@ -25,7 +26,9 @@ const LoginForm = () => {
         }).then((res) => {
           
           if (res.ok) {
+          
             console.log('successful')
+            console.log(res)
             navigate('/dummy')
             return res.json();
           } else {
@@ -38,7 +41,7 @@ const LoginForm = () => {
         .then((data) => {
           
            localStorage.setItem("email" ,JSON.stringify(data.email))
-           localStorage.setItem("token",JSON.stringify(data.idToken))
+           localStorage.setItem("token",data.idToken)
           
         })
         .catch((error) => {
@@ -48,7 +51,12 @@ const LoginForm = () => {
 
     }
   return (
-    <div> <Card style={{ width:'50rem',height:'32rem',alignItems:'inherit',background:'azure',borderRadius:'20px',borderColor:'black',margin:'auto'}}>
+    <div className="h-full"> 
+    
+    <div className='py-40' >
+
+    
+     <Card  style={{ width:'50rem',height:'32rem',alignItems:'inherit',background:'azure',borderRadius:'20px',borderColor:'black',margin:'auto'}}>
     <header style={{textAlign:'center',fontSize:'3rem',color:"black",borderRadius:'20px',marginTop:"2rem",fontFamily:'bold'}}>Login</header>
   <Form style={{alignItems:'center',marginTop:'0.3rem'}} onSubmit={submitHandler} >
     <FormGroup controlId="formBasicEmail">
@@ -63,7 +71,9 @@ const LoginForm = () => {
    <Button variant="primary" type="submit" style={{marginTop:'2rem',marginLeft:'13rem',width:"40%",padding:'1rem'}}>Submit</Button>
   </Form>
  
-</Card></div>
+</Card>
+</div>
+</div>
   )
 }
 

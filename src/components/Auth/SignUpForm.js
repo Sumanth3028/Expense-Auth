@@ -31,7 +31,9 @@ const SignUpForm = () => {
             }), headers:{
               "content-Type":"application/json"
           }
+          
           })
+          console.log(res)
           let data
           if(res.ok)
           {
@@ -41,6 +43,7 @@ const SignUpForm = () => {
             },1000)
             
             return res.json()
+
             
             
           }
@@ -69,7 +72,7 @@ const SignUpForm = () => {
   return (
     <div >
    
-    <div  >
+    <div className="py-20" >
     <Card style={{ width:'50rem',height:'40rem',alignItems:'inherit',background:'azure',borderRadius:'20px',borderColor:'black',margin:'auto'}}>
         <header style={{textAlign:'center',fontSize:'3rem',color:"black",borderRadius:'20px',marginTop:"2rem",fontFamily:'bold'}}>Sign Up</header>
       <Form style={{alignItems:'center',marginTop:'0.3rem'}}  onSubmit={submitHandler}>
