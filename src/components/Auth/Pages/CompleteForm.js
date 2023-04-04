@@ -5,40 +5,34 @@ import { GoMarkGithub } from "react-icons/go";
 import { HiGlobeAlt } from "react-icons/hi";
 
 const CompleteForm = () => {
-  const [success,setSuccess]=useState(false)
+  const [success, setSuccess] = useState(false);
+  const [verify, setVerify] = useState(false);
   const fullNameRef = useRef();
   const profileRef = useRef();
   const idtoken1 = localStorage.getItem("token");
   //   const [userData, setUserData ]= useState()
 
   const gettingFormData = async () => {
-    
-    let response=await axios.post(
+    let response = await axios.post(
       "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg",
       {
-      
-       
-          idToken: idtoken1,
-        })
-       
-      if (response) {
-         //fullNameRef.current.value=sometempvar.users
-        //console.log(data.data.users[0].displayName)
-        fullNameRef.current.value=response.data.users[0].displayName
-        profileRef.current.value=response.data.users[0].photoUrl
-        console.log(response.data)
-     
-         } 
-         else {
-        const error = "authentication failed";
-        alert(error);
+        idToken: idtoken1,
+      }
+    );
+
+    if (response) {
+      //fullNameRef.current.value=sometempvar.users
+      //console.log(data.data.users[0].displayName)
+      fullNameRef.current.value = response.data.users[0].displayName;
+      profileRef.current.value = response.data.users[0].photoUrl;
+      //console.log(response.data);
+    } else {
+      const error = "authentication failed";
+      alert(error);
     }
-  
-  }
+  };
   useEffect(() => {
-   
-    gettingFormData()
-   
+    gettingFormData();
   }, []);
   const submitHandler = async (event) => {
     event.preventDefault();
@@ -64,7 +58,7 @@ const CompleteForm = () => {
     let data;
     if (res.ok) {
       // console.log('apple', res.displayName)
-      setSuccess(true)
+      setSuccess(true);
       return res.json();
     } else {
       data = res.json();
@@ -73,6 +67,27 @@ const CompleteForm = () => {
       alert(errorMessage);
     }
   };
+
+  const verifyHandler = async (e) => {
+    e.preventDefault()
+    try{
+    let res = await axios.post(
+      "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg",
+      {
+        requestType: "VERIFY_EMAIL",
+        idToken: idtoken1,
+      }
+    );
+ 
+   
+      setVerify(true);
+      console.log(res);
+      
+    } catch(error) {
+      console.log("error:", error);
+    }
+  };
+
   return (
     <div className=" bg-white h-full ">
       <div className=" flex  px-10 py-10 w-full text-black text-xl italic justify-between">
@@ -92,7 +107,7 @@ const CompleteForm = () => {
 
       <div className="flex justify-end">
         <div className=" w-[1000px] flex justify-between mx-10 my-3">
-          {" "}
+        
           <header className="text-2xl font-semibold ">Contact Details:</header>
           <button className=" border-red-600 border-2 rounded text-lg font-semibold  text-red-600 px-6 py-1 ">
             Cancel
@@ -107,10 +122,7 @@ const CompleteForm = () => {
       <div className="flex justify-end">
         <div className=" flex flex-col">
           {/* ele 1  */}
-          <form
-            className=" w-[1000px] mx-10 my-3  font-bold"
-            onSubmit={submitHandler}
-          >
+          <form className=" w-[1000px] mx-10 my-3  font-bold">
             <div className="flex justify-between items-center">
               <div className="flex items-center ">
                 <GoMarkGithub className="text-2xl mx-2 px-0" />
@@ -133,18 +145,24 @@ const CompleteForm = () => {
                   required
                 ></input>
               </div>
-             
             </div>
-           
 
-            {/* <Button variant="danger">update</Button> */}
             <button
               className="bg-red-500 rounded my-4 py-1 px-4 text-white font-medium"
               type="submit"
+              onClick={submitHandler}
             >
               Update
             </button>
             {success && <p>updated successfully</p>}
+            <button
+              className="bg-red-500 rounded ml-3 my-4 py-1 px-4 text-white font-medium"
+              type="submit"
+              onClick={verifyHandler}
+            >
+              Verify Email
+            </button>
+            {verify && <p>verification link sent successfully</p>}
           </form>
           {/* {userData} */}
         </div>
