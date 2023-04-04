@@ -3,12 +3,16 @@ import React, { useEffect, useState } from "react";
 import { useRef } from "react";
 import { GoMarkGithub } from "react-icons/go";
 import { HiGlobeAlt } from "react-icons/hi";
+import { useNavigate} from "react-router-dom";
+
 
 const CompleteForm = () => {
+  const [login,setLogin]=useState(true)
   const [success, setSuccess] = useState(false);
   const [verify, setVerify] = useState(false);
   const fullNameRef = useRef();
   const profileRef = useRef();
+  const navigate=useNavigate()
   const idtoken1 = localStorage.getItem("token");
   //   const [userData, setUserData ]= useState()
 
@@ -88,19 +92,32 @@ const CompleteForm = () => {
     }
   };
 
+  const logOutHandler=()=>{
+    setLogin(false)
+  
+    localStorage.removeItem('token')
+    localStorage.removeItem('email')
+    navigate('/')
+    
+  }
+
   return (
     <div className=" bg-white h-full ">
       <div className=" flex  px-10 py-10 w-full text-black text-xl italic justify-between">
         <div>
           <p>Winners never quit, Quitters never win</p>
         </div>
-        <div className="bg-gray-200 px-2 py-1  w-[500px] rounded overflow-hidden">
+        <div className="bg-gray-200 px-2 py-1 ml-[300px] w-[500px] rounded overflow-hidden">
           <p>
             Your profile is 64% completed.A complete profile has high chances of
             landing a job.
             <span className="text-blue-500">Complete Now</span>
           </p>
         </div>
+        <button className=" border-red-600 border-2 rounded text-md font-semibold  text-red-600 px-6 py-1 " onClick={logOutHandler}>
+            logout
+          </button>
+          
       </div>
       {/* line  */}
       <div className="bg-black h-[1px] w-full "></div>
@@ -109,9 +126,9 @@ const CompleteForm = () => {
         <div className=" w-[1000px] flex justify-between mx-10 my-3">
         
           <header className="text-2xl font-semibold ">Contact Details:</header>
-          <button className=" border-red-600 border-2 rounded text-lg font-semibold  text-red-600 px-6 py-1 ">
+          {/* <button className=" border-red-600 border-2 rounded text-lg font-semibold  text-red-600 px-6 py-1 ">
             Cancel
-          </button>
+          </button> */}
         </div>
       </div>
 
