@@ -1,6 +1,6 @@
 import React,{useRef, useState} from 'react'
 import { Button, Card, Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 
@@ -68,10 +68,13 @@ const LoginForm = () => {
       <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem'}}>Password:</FormLabel>
       <FormControl type="password" placeholder=" Enter password" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={password} required></FormControl>
     </FormGroup>
-   <Button variant="primary" type="submit" style={{marginTop:'2rem',marginLeft:'13rem',width:"40%",padding:'1rem'}}>Submit</Button>
+   <Button variant="primary" type="submit" style={{marginTop:'2rem',marginLeft:'13rem',width:"40%",padding:'1rem',marginBottom:'1rem'}}>login</Button>
+
   </Form>
  
 </Card>
+
+<p className='text-white text-xl ml-[830px]'>Forgot Your Password</p><Link to={'/forgotpassword'} className=' text-xl text-blue-400  ml-[550px] px-[300px] py-[220px]'>forgot password</Link>
 </div>
 </div>
   )
