@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
 import AbstractModalHeader from "react-bootstrap/esm/AbstractModalHeader";
-
+import axios from "axios";
 const Dummy = () => {
 
   let [items  , setItems ] = useState( [])
@@ -12,7 +12,8 @@ const Dummy = () => {
   const descRef = useRef();
   const selectRef = useRef();
   const loctoken = localStorage.getItem("token");
-  
+  const emailId = localStorage.getItem("email");
+  const email=emailId.replace('@','').replace(".","")
   useEffect(() => {
     setTimeout(() => {
       setToken(loctoken);
@@ -20,21 +21,52 @@ const Dummy = () => {
 
     // console.log("hello");
   }, [token]);
-  const submitHandler = (e) => {
+  const submitHandler = async(e) => {
     e.preventDefault();
-    const result = {
+    try {
+    
+    let result=await axios.post(`https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`,{
       amount: amountRef.current.value,
       description: descRef.current.value,
       select: selectRef.current.value,
-    };;
+    })
+     console.log(result.data.name)
 
-    // console.log(result)
-
-    setItems([...items, result])
-
+    setItems(result.data)
+    //  console.log(result.data.name)
+    getData()
+  } catch(error){
+    console.log(error.message)
+  }
   };
-  
- 
+  const getData=async()=>{
+    try {
+     
+      let result = await axios.get(
+        `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`
+      );
+      setItems( result.data)
+      
+      
+    } catch (error) {
+    
+      console.log("error:", error);
+    }
+  }
+   const newItems=[]
+    for(let key in items)
+    {
+      const obj={
+        id:key,
+        ...items[key]
+      }
+      newItems.push(obj)
+    }
+
+
+    useEffect(()=>{
+      getData()
+    },[])
   return (
     // bg color
 
@@ -96,12 +128,10 @@ const Dummy = () => {
                   Submit
                 </button>
               </form>
-              <Table striped bordered hover variant="dark" >
-                
-              </Table>
-              {items.map((item) => (
+             
+              {newItems.map((item) => (
                 <div  key={Math.random()}>
-                  <Table striped bordered >
+                  <Table striped bordered variant="dark" >
                   <thead>
                   <tr>
                     <th>Amount</th>
