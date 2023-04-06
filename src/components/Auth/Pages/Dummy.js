@@ -3,9 +3,8 @@ import { Table } from "react-bootstrap";
 import AbstractModalHeader from "react-bootstrap/esm/AbstractModalHeader";
 import axios from "axios";
 const Dummy = () => {
-
-  let [items  , setItems ] = useState( [])
-
+  const [items, setItems] = useState([]);
+  const [editId, setEditId] = useState(undefined);
 
   const [token, setToken] = useState();
   const amountRef = useRef();
@@ -13,7 +12,7 @@ const Dummy = () => {
   const selectRef = useRef();
   const loctoken = localStorage.getItem("token");
   const emailId = localStorage.getItem("email");
-  const email=emailId.replace('@','').replace(".","")
+  const email = emailId.replace("@", "").replace(".", "");
   useEffect(() => {
     setTimeout(() => {
       setToken(loctoken);
@@ -21,52 +20,101 @@ const Dummy = () => {
 
     // console.log("hello");
   }, [token]);
-  const submitHandler = async(e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    try {
-    
-    let result=await axios.post(`https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`,{
-      amount: amountRef.current.value,
-      description: descRef.current.value,
-      select: selectRef.current.value,
-    })
-     console.log(result.data.name)
+    if (editId === undefined) {
+      try {
+        let result = await axios.post(
+          `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`,
+          {
+            amount: amountRef.current.value,
+            description: descRef.current.value,
+            select: selectRef.current.value,
+          }
+        );
+        // console.log(result.data.name);
 
-    setItems(result.data)
-    //  console.log(result.data.name)
-    getData()
-  } catch(error){
-    console.log(error.message)
-  }
+        setItems(result.data);
+        //  console.log(result.data.name)
+        getData();
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      console.log(editId);
+
+      try {
+        let res = await axios.put(
+          `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}/${editId}.json`,
+          {
+            amount: amountRef.current.value,
+            description: descRef.current.value,
+            select: selectRef.current.value,
+          }
+        );
+        console.log(res);
+        getData();
+        setEditId(undefined);
+      } catch (error) {
+        console.log("error:", error);
+      }
+    }
   };
-  const getData=async()=>{
+
+  const getData = async () => {
     try {
-     
       let result = await axios.get(
         `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`
       );
-      setItems( result.data)
-      
-      
+      setItems(result.data);
     } catch (error) {
-    
+      console.log("error:", error);
+    }
+  };
+  const newItems = [];
+  for (let key in items) {
+    const obj = {
+      id: key,
+      ...items[key],
+    };
+    newItems.push(obj);
+  }
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const editHandler = (amount, description, select) => {
+    amountRef.current.value = amount;
+    descRef.current.value = description;
+    selectRef.current.value = select;
+
+    if (
+      amountRef.current.value === amount ||
+      descRef.current.value === description ||
+      selectRef.current.value === select
+    ) {
+      return;
+    }
+  };
+
+  const deleteHandler=async(id)=>{
+
+    try{
+
+      let res=await axios.delete(`https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}/${id}.json`)
+       getData()
+       console.log('deleted')
+    }
+    catch (error) {
+     
       console.log("error:", error);
     }
   }
-   const newItems=[]
-    for(let key in items)
-    {
-      const obj={
-        id:key,
-        ...items[key]
-      }
-      newItems.push(obj)
-    }
 
 
-    useEffect(()=>{
-      getData()
-    },[])
+
+
   return (
     // bg color
 
@@ -95,10 +143,7 @@ const Dummy = () => {
               <header className="text-black font-bold text-center text-4xl  py-[60px]">
                 Expense Form
               </header>
-              <form
-                className="bg-red-400 rounded overflow-hidden py-5"
-                
-              >
+              <form className="bg-red-400 rounded overflow-hidden py-5">
                 <label className="mr-3 text-2xl ml-[80px]">Money Spent:</label>
                 <input
                   type="number"
@@ -121,39 +166,58 @@ const Dummy = () => {
                   <option value="Petrol">Petrol</option>
                 </select>
                 <button
-                onClick={submitHandler}
+                  onClick={submitHandler}
                   type="submit"
                   className="text-2xl bg-yellow-300 border-2 rounded px-4 py-2"
                 >
                   Submit
                 </button>
               </form>
-             
+
               {newItems.map((item) => (
-                <div  key={Math.random()}>
-                  <Table striped bordered variant="dark" >
-                  <thead>
-                  <tr>
-                    <th>Amount</th>
-                    <th>Description</th>
-                    <th>Category</th>
-                    {/* <th>Delete Expense</th>
-                    <th>Edit Expense</th> */}
-                  </tr>
-                </thead>
-                   <tbody >
-                    <tr>
-                      <td>{item.amount}</td>
-                      <td>{item.description}</td>
-                      <td>{item.select}</td>
-                    </tr>
-                  
-                  </tbody>
-                 </Table>
+                <div key={item.id}>
+                  <Table striped bordered variant="dark">
+                    <thead>
+                      <tr>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Category</th>
+                        <th>Delete Expense</th>
+                        <th>Edit Expense</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{item.amount}</td>
+                        <td>{item.description}</td>
+                        <td>{item.select}</td>
+                        <td>
+                          <button
+                            className="bg-red-400 ml-4 rounded"
+                            onClick={() => deleteHandler(item.id)}
+                          >
+                            Delete Expense
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            onClick={() =>
+                              editHandler(
+                                item.amount,
+                                item.description,
+                                item.select,
+                                setEditId(item.id)
+                              )
+                            }
+                            className="bg-red-400 ml-4 rounded"
+                          >
+                            Edit Expense
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </Table>
                 </div>
-                 
-                 
-                
               ))}
             </div>
           </div>
