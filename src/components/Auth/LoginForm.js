@@ -1,55 +1,63 @@
 import React,{useRef, useState} from 'react'
 import { Button, Card, Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
-
-
+import {useDispatch} from 'react-redux'
+import { UserLogin } from '../Redux/AuthActions'
 
 const LoginForm = () => {
-    const [login,setLogin]=useState(false)
+    // const [login,setLogin]=useState(false)'
+    const dispatch=useDispatch()
     const email=useRef('')
     const password=useRef('')
     const navigate=useNavigate()
-    const submitHandler=(event)=>{
+    const submitHandler=async(event)=>{
         event.preventDefault()
         const emailValue=email.current.value
         const passwordValue=password.current.value
         fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg',{
-            method:"POST",
-            body:JSON.stringify({
-                email:emailValue,
-                password:passwordValue,
-                returnSecureToken:true
-            }),
-            headers:{
-                "content-Type":"application/json"
-            }
-        }).then((res) => {
-          
-          if (res.ok) {
-          
-            console.log('successful')
-            console.log(res)
-            navigate('/dummy')
-            return res.json();
-          } else {
-            return res.json().then((data) => {
-              let errorMessage = "Authentication failed!";
-              throw new Error(data.error.message);
-            });
+          method:"POST",
+          body:JSON.stringify({
+              email:emailValue,
+              password:passwordValue,
+              returnSecureToken:true
+          }),
+          headers:{
+              "content-Type":"application/json"
           }
-        })
-        .then((data) => {
-          
-           localStorage.setItem("email" ,JSON.stringify(data.email))
-           localStorage.setItem("token",data.idToken)
-          
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+      }).then((res) => {
         
-
+        if (res.ok) {
+        
+          console.log('successful')
+          console.log(res)
+          navigate('/dummy')
+          return res.json();
+        } else {
+          return res.json().then((data) => {
+            let errorMessage = "Authentication failed!";
+            throw new Error(data.error.message);
+          });
+        }
+      })
+      .then((data) => {
+         console.log(data)
+         localStorage.setItem("email" ,JSON.stringify(data.email))
+         localStorage.setItem("token",data.idToken)
+        
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+        
+      if(email==='' || password===''){
+        alert('please fill all fields')
+      }
+      else 
+      {
+        dispatch(UserLogin(emailValue,passwordValue))
+      }
     }
+    
   return (
     <div className="h-full"> 
     
