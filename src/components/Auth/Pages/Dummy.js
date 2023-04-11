@@ -22,6 +22,11 @@ const Dummy = () => {
   }, [token]);
   const submitHandler = async (e) => {
     e.preventDefault();
+    if(amountRef.current.value===''||descRef.current.value===''||selectRef.current.value==='')
+    {
+      alert('please fill all fields')
+    }
+    else{
     if (editId === undefined) {
       try {
         let result = await axios.post(
@@ -60,7 +65,7 @@ const Dummy = () => {
       }
     }
   };
-
+  }
   const getData = async () => {
     try {
       let result = await axios.get(
@@ -71,6 +76,7 @@ const Dummy = () => {
       console.log("error:", error);
     }
   };
+
   const newItems = [];
   for (let key in items) {
     const obj = {
@@ -98,22 +104,24 @@ const Dummy = () => {
     }
   };
 
-  const deleteHandler=async(id)=>{
-
-    try{
-
-      let res=await axios.delete(`https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}/${id}.json`)
-       getData()
-       console.log('deleted')
-    }
-    catch (error) {
-     
+  const deleteHandler = async (id) => {
+    try {
+      let res = await axios.delete(
+        `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}/${id}.json`
+      );
+      getData();
+      console.log("deleted");
+    } catch (error) {
       console.log("error:", error);
     }
-  }
+  };
 
-
-
+  const total = newItems.reduce((accumulator, curNum) => {
+    return Number(curNum.amount) + accumulator;
+  }, 0);
+  amountRef.current.value = "";
+  descRef.current.value = "";
+  selectRef.current.value = "";
 
   return (
     // bg color
@@ -143,6 +151,14 @@ const Dummy = () => {
               <header className="text-black font-bold text-center text-4xl  py-[60px]">
                 Expense Form
               </header>
+              <div className="text-end mr-10 px-3 my-2 font-bold ">
+                Total Expense:{total}
+                {total >= 10000 && (
+                  <button  className="ml-8 bg-white rounded py-2">
+                    Activate Premium
+                  </button>
+                )}
+              </div>
               <form className="bg-red-400 rounded overflow-hidden py-5">
                 <label className="mr-3 text-2xl ml-[80px]">Money Spent:</label>
                 <input
@@ -159,7 +175,7 @@ const Dummy = () => {
                   required
                 ></input>
                 <label className="mr-3 text-2xl">Select Category:</label>
-                <select ref={selectRef} className=" mr-14  w-[210px] h-[40px]">
+                <select ref={selectRef} className=" mr-14  w-[210px] h-[40px]" required>
                   <option value="Food">Food</option>
                   <option value="Entertainment">Entertainment</option>
                   <option value="Shopping">Shopping</option>
