@@ -2,17 +2,25 @@ import React, { useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
 import AbstractModalHeader from "react-bootstrap/esm/AbstractModalHeader";
 import axios from "axios";
+import { useContext } from "react";
+import { ThemeContext } from "../../Context/theme";
+import { CSVLink } from "react-csv";
 const Dummy = () => {
   const [items, setItems] = useState([]);
   const [editId, setEditId] = useState(undefined);
-
   const [token, setToken] = useState();
+  const ctx = useContext(ThemeContext);
+
   const amountRef = useRef();
+
   const descRef = useRef();
+
   const selectRef = useRef();
+
   const loctoken = localStorage.getItem("token");
   const emailId = localStorage.getItem("email");
   const email = emailId.replace("@", "").replace(".", "");
+
   useEffect(() => {
     setTimeout(() => {
       setToken(loctoken);
@@ -22,50 +30,55 @@ const Dummy = () => {
   }, [token]);
   const submitHandler = async (e) => {
     e.preventDefault();
-    if(amountRef.current.value===''||descRef.current.value===''||selectRef.current.value==='')
-    {
-      alert('please fill all fields')
-    }
-    else{
-    if (editId === undefined) {
-      try {
-        let result = await axios.post(
-          `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`,
-          {
-            amount: amountRef.current.value,
-            description: descRef.current.value,
-            select: selectRef.current.value,
-          }
-        );
-        // console.log(result.data.name);
-
-        setItems(result.data);
-        //  console.log(result.data.name)
-        getData();
-      } catch (error) {
-        console.log(error.message);
-      }
+    if (
+      amountRef.current.value === "" ||
+      descRef.current.value === "" ||
+      selectRef.current.value === ""
+    ) {
+      alert("please fill all fields");
     } else {
-      console.log(editId);
+      if (editId === undefined) {
+        try {
+          let result = await axios.post(
+            `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`,
+            {
+              amount: amountRef.current.value,
+              description: descRef.current.value,
+              select: selectRef.current.value,
+            }
+          );
+          // console.log(result.data.name);
 
-      try {
-        let res = await axios.put(
-          `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}/${editId}.json`,
-          {
-            amount: amountRef.current.value,
-            description: descRef.current.value,
-            select: selectRef.current.value,
-          }
-        );
-        console.log(res);
-        getData();
-        setEditId(undefined);
-      } catch (error) {
-        console.log("error:", error);
+          setItems(result.data);
+          //  console.log(result.data.name)
+          // amountRef.current.value = "";
+          // descRef.current.value = "";
+          // selectRef.current.value = "";
+          getData();
+        } catch (error) {
+          console.log(error.message);
+        }
+      } else {
+        console.log(editId);
+
+        try {
+          let res = await axios.put(
+            `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}/${editId}.json`,
+            {
+              amount: amountRef.current.value,
+              description: descRef.current.value,
+              select: selectRef.current.value,
+            }
+          );
+          console.log(res);
+          getData();
+          setEditId(undefined);
+        } catch (error) {
+          console.log("error:", error);
+        }
       }
     }
   };
-  }
   const getData = async () => {
     try {
       let result = await axios.get(
@@ -119,14 +132,24 @@ const Dummy = () => {
   const total = newItems.reduce((accumulator, curNum) => {
     return Number(curNum.amount) + accumulator;
   }, 0);
-  amountRef.current.value = "";
-  descRef.current.value = "";
-  selectRef.current.value = "";
 
+  const makeCsv = (newItems) => {
+    return newItems.map((r) => r).join("\n");
+  };
+
+  // const download=()=>{
+  //   const a1=document.createElement('a1')
+  //   const blob1=new Blob([makeCsv(newItems)])
+  //   a1.href=URL.createObjectURL(blob1)
+  //   a1.download='yes.csv'
+  //   console.log(a1)
+  //   a1.click()
+  // }
+  const csv = { data: newItems };
   return (
     // bg color
 
-    <div className="h-full bg-white text-black">
+    <div>
       {/* div 1 if not logged in */}
       {!token && (
         <div>
@@ -136,8 +159,8 @@ const Dummy = () => {
 
       {/* div 2  , logged in */}
       {token && (
-        <div className="h-full">
-          <div className="bg-white h-full  px-10 py-10 w-full text-black text-3xl">
+        <div className="h-full ">
+          <div className=" h-full  px-10 py-10 w-full text-3xl">
             <div className="flex justify-between">
               <div> Welcome to Expense Tracker</div>
               <div className=" text-xl ">
@@ -154,28 +177,36 @@ const Dummy = () => {
               <div className="text-end mr-10 px-3 my-2 font-bold ">
                 Total Expense:{total}
                 {total >= 10000 && (
-                  <button  className="ml-8 bg-white rounded py-2">
+                  <button
+                    onClick={ctx.handleTheme}
+                    className="ml-8 bg-white rounded py-2 text-black"
+                  >
                     Activate Premium
                   </button>
                 )}
               </div>
-              <form className="bg-red-400 rounded overflow-hidden py-5">
+
+              <form className="bg-red-400 rounded overflow-hidden py-5 ">
                 <label className="mr-3 text-2xl ml-[80px]">Money Spent:</label>
                 <input
                   type="number"
-                  className="rounded mr-5"
+                  className="rounded mr-5 text-black"
                   ref={amountRef}
                   required
                 ></input>
                 <label className="mr-3 text-2xl">Description:</label>
                 <input
                   type="text"
-                  className="rounded mr-5"
+                  className="rounded mr-5 text-black"
                   ref={descRef}
                   required
                 ></input>
                 <label className="mr-3 text-2xl">Select Category:</label>
-                <select ref={selectRef} className=" mr-14  w-[210px] h-[40px]" required>
+                <select
+                  ref={selectRef}
+                  className=" mr-14  w-[210px] h-[40px] text-black"
+                  required
+                >
                   <option value="Food">Food</option>
                   <option value="Entertainment">Entertainment</option>
                   <option value="Shopping">Shopping</option>
@@ -235,6 +266,17 @@ const Dummy = () => {
                   </Table>
                 </div>
               ))}
+            </div>
+
+            <div>
+              {/* <button
+                onClick={download}
+                download="file.csv"
+             
+              >
+                Download Csv File
+              </button> */}
+              <CSVLink className="text-m bg-white text-black rounded ml-[1490px] "{...csv}>Download File</CSVLink>
             </div>
           </div>
         </div>
