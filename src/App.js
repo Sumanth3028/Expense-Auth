@@ -7,11 +7,26 @@ import CompleteForm from "./components/Auth/Pages/CompleteForm";
 import ForgotPassword from "./components/Auth/Pages/ForgotPassword";
 import PrivateRoutes from "./components/Auth/PrivateRoutes/PrivateRoutes";
 import Dummy from "./components/Auth/Pages/Dummy" 
+import { ThemeContext } from "./components/Context/theme";
+import { useContext } from "react";
+
 
 function App() {
+  const value = useContext(ThemeContext);
 
+  const style = {
+    light: {
+      color: "black",
+      background: "white",
+    },
+    dark: {
+      color: "white",
+      background: "black",
+    },
+  };
   return (
-    <div style={{background:'black',height:'930px',width:'100%'}} >
+    
+    <div style={value.theme === "dark" ? style.dark : style.light} className="height-[950px] py-[60px]">
       <Routes>
         <Route path='/' element={<SignUpForm/>}></Route>
         <Route path='/login' element={<LoginForm/>}></Route>
@@ -21,6 +36,7 @@ function App() {
       </Routes>
       
     </div>
+    
   );
 }
 
