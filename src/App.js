@@ -6,7 +6,7 @@ import LoginForm from "./components/Auth/LoginForm";
 import CompleteForm from "./components/Auth/Pages/CompleteForm";
 import ForgotPassword from "./components/Auth/Pages/ForgotPassword";
 import PrivateRoutes from "./components/Auth/PrivateRoutes/PrivateRoutes";
-import Dummy from "./components/Auth/Pages/Dummy" 
+import Dummy from "./components/Dummy/Dummy";
 import { ThemeContext } from "./components/Context/theme";
 import { useContext } from "react";
 

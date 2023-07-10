@@ -94,7 +94,7 @@ const CompleteForm = () => {
 
   const logOutHandler=()=>{
     setLogin(false)
-  
+    alert("Are You Sure?")
     localStorage.removeItem('token')
     localStorage.removeItem('email')
     navigate('/')
@@ -143,9 +143,9 @@ const CompleteForm = () => {
             <div className="flex justify-between items-center">
               <div className="flex items-center ">
                 <GoMarkGithub className="text-2xl mx-2 px-0" />
-                <label className="">Full Name:</label>
+                <label className="text-black">Full Name:</label>
                 <input
-                  className="border-2 ml-5 rounded w-[350px]"
+                  className="border-2 ml-5 rounded w-[350px] text-black"
                   type="text"
                   ref={fullNameRef}
                   required
@@ -153,10 +153,10 @@ const CompleteForm = () => {
               </div>
 
               <div className="flex items-center">
-                <HiGlobeAlt className="text-3xl mx-2 px-0" />
-                <label className="">Profile URL:</label>
+                <HiGlobeAlt className="text-3xl mx-2 px-0 bg-black" />
+                <label className="text-black">Profile URL:</label>
                 <input
-                  className="border-2 ml-5 rounded w-[350px]"
+                  className="border-2 ml-5 rounded w-[350px] text-black"
                   type="text"
                   ref={profileRef}
                   required
@@ -171,7 +171,7 @@ const CompleteForm = () => {
             >
               Update
             </button>
-            {success && <p>updated successfully</p>}
+            {success && <p className="text-blue-500">updated successfully</p>}
             <button
               className="bg-red-500 rounded ml-3 my-4 py-1 px-4 text-white font-medium"
               type="submit"
@@ -179,7 +179,7 @@ const CompleteForm = () => {
             >
               Verify Email
             </button>
-            {verify && <p>verification link sent successfully</p>}
+            {verify && <p className="text-blue-500">verification link sent successfully</p>}
           </form>
           {/* {userData} */}
         </div>
