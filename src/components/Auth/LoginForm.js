@@ -68,12 +68,12 @@ const LoginForm = () => {
     <header style={{textAlign:'center',fontSize:'3rem',color:"black",borderRadius:'20px',marginTop:"2rem",fontFamily:'bold'}}>Login</header>
   <Form style={{alignItems:'center',marginTop:'0.3rem'}} onSubmit={submitHandler} >
     <FormGroup controlId="formBasicEmail">
-      <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem'}}>Email Id:</FormLabel>
+      <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'black'}}>Email Id:</FormLabel>
      
       <FormControl type="email"  placeholder="enter email" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={email} required></FormControl>
     </FormGroup>
     <FormGroup  controlId="formBasicPassword">
-      <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem'}}>Password:</FormLabel>
+      <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'black'}}>Password:</FormLabel>
       <FormControl type="password" placeholder=" Enter password" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={password} required></FormControl>
     </FormGroup>
    <Button variant="primary" type="submit" style={{marginTop:'2rem',marginLeft:'13rem',width:"40%",padding:'1rem',marginBottom:'1rem'}}>login</Button>

@@ -1,12 +1,10 @@
-import axios from "axios";
 import {
   USER_LOGIN_ERROR,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
 } from "./AuthActionTypes";
-import { useDispatch } from "react-redux";
-export const UserLogin = (email, password)=>async(dispatch) => {
-   
+import axios from "axios";
+export const UserLogin = (email, password) => async (dispatch) => {
   try {
     dispatch({ type: USER_LOGIN_REQUEST });
     let res = await axios.post(
@@ -24,6 +22,6 @@ export const UserLogin = (email, password)=>async(dispatch) => {
   } catch (error) {
     alert("Login Failed");
     dispatch({ type: USER_LOGIN_ERROR });
-    console.log( error);
+    console.log(error);
   }
 };

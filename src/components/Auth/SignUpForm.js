@@ -21,7 +21,7 @@ const SignUpForm = () => {
           setError(false)
           
          
-          let res= await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg',{
+          let res= await fetch('http://localhost:4000/postDetails',{
             method:"POST",
             body:JSON.stringify({
                email:emailValue,
@@ -40,7 +40,7 @@ const SignUpForm = () => {
             isSuccessful(true)
             setTimeout(()=>{
               navigate('/login')
-            },1000)
+            },2000)
             
             return res.json()
 
@@ -77,16 +77,16 @@ const SignUpForm = () => {
         <header style={{textAlign:'center',fontSize:'3rem',color:"black",borderRadius:'20px',marginTop:"2rem",fontFamily:'bold'}}>Sign Up</header>
       <Form style={{alignItems:'center',marginTop:'0.3rem'}}  onSubmit={submitHandler}>
         <FormGroup  controlId="formBasicEmail">
-          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem'}}>Email Id:</FormLabel>
+          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'black'}}>Email Id:</FormLabel>
          
           <FormControl type="email"  placeholder="enter email" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={email} required></FormControl>
         </FormGroup>
         <FormGroup  controlId="formBasicPassword">
-          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem'}}>Password:</FormLabel>
+          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'black'}}>Password:</FormLabel>
           <FormControl type="password" placeholder=" Enter password" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={password} required></FormControl>
         </FormGroup>
         <FormGroup  controlId="formBasicConfirmPassword">
-          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem'}}>Confirm Password:</FormLabel>
+          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'black'}}>Confirm Password:</FormLabel>
           <FormControl type="password"   placeholder=" Confirm password" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={confirm} required></FormControl>
           {error && <p style={{fontSize:'1rem',color:'red',marginLeft:'5rem'}}>Password and confirm password did'nt match</p>}
           {successful && <p style={{fontSize:'1rem',color:'blue',marginLeft:'5rem'}}>Account created successfully</p> }
