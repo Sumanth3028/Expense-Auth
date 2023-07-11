@@ -26,15 +26,14 @@ const LoginForm = () => {
         
         if (res.status===200) {
         
-          console.log('successful')
-          console.log(res)
+         alert('login Successful')
           navigate('/dummy')
           return res;
         } else {
-          
+          return res.then((data) => {
             let errorMessage = "Authentication failed!";
-            throw new Error(errorMessage);
-         
+            throw new Error(data.error.message);
+          });
         }
       })
       .then((data) => {

@@ -26,7 +26,7 @@ function App() {
   };
   return (
     
-    <div style={value.theme === "dark" ? style.dark : style.light} className="height-[950px] py-[60px]">
+    <div style={value.theme === "dark" ? style.dark : style.light} className="h-[930px] py-[10px]">
       <Routes>
         <Route path='/' element={<SignUpForm/>}></Route>
         <Route path='/login' element={<LoginForm/>}></Route>
