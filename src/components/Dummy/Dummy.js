@@ -99,7 +99,7 @@ const Dummy = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [items]);
 
   const editHandler = (amount, description, select) => {
     amountRef.current.value = amount;
@@ -115,13 +115,21 @@ const Dummy = () => {
     }
   };
 
-  const deleteHandler = async (id) => {
+  const deleteHandler =  (id) => {
     try {
-      let res = await axios.delete(
-        `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}/${id}.json`
-      );
-      getData();
-      console.log("deleted");
+      
+      
+       axios.post(
+        `http://localhost:4000/expense/deleteDetails/${id}`, 
+      ).then((result)=>{
+       
+          getData()
+        
+      
+        
+      })
+    
+      
     } catch (error) {
       console.log("error:", error);
     }
@@ -170,7 +178,7 @@ const Dummy = () => {
             </div>
             {/* <div className="bg-black h-[200px] w-full "></div> */}
             <div className="bg-gray-400 mx-10 my-5 h-full w-[1700px]">
-              <header className="text-black font-bold text-center text-[40px]  py-[60px]">
+              <header className="text-black font-bold text-center text-[60px]  py-[60px]">
                 Expense Form
               </header>
               <div className="text-end mr-10 px-2 my-1 font-bold ">
