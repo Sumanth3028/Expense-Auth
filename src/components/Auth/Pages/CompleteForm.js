@@ -16,81 +16,81 @@ const CompleteForm = () => {
   const idtoken1 = localStorage.getItem("token");
   //   const [userData, setUserData ]= useState()
 
-  const gettingFormData = async () => {
-    let response = await axios.post(
-      "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg",
-      {
-        idToken: idtoken1,
-      }
-    );
+  // const gettingFormData = async () => {
+  //   let response = await axios.post(
+  //     "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg",
+  //     {
+  //       idToken: idtoken1,
+  //     }
+  //   );
 
-    if (response) {
-      //fullNameRef.current.value=sometempvar.users
-      //console.log(data.data.users[0].displayName)
-      fullNameRef.current.value = response.data.users[0].displayName;
-      profileRef.current.value = response.data.users[0].photoUrl;
-      //console.log(response.data);
-    } else {
-      const error = "authentication failed";
-      alert(error);
-    }
-  };
-  useEffect(() => {
-    gettingFormData();
-  }, []);
-  const submitHandler = async (event) => {
-    event.preventDefault();
+  //   if (response) {
+  //     //fullNameRef.current.value=sometempvar.users
+  //     //console.log(data.data.users[0].displayName)
+  //     fullNameRef.current.value = response.data.users[0].displayName;
+  //     profileRef.current.value = response.data.users[0].photoUrl;
+  //     //console.log(response.data);
+  //   } else {
+  //     const error = "authentication failed";
+  //     alert(error);
+  //   }
+  // };
+  // useEffect(() => {
+  //   gettingFormData();
+  // }, []);
+  // const submitHandler = async (event) => {
+  //   event.preventDefault();
 
-    const fullName = fullNameRef.current.value;
-    const profile = profileRef.current.value;
+  //   const fullName = fullNameRef.current.value;
+  //   const profile = profileRef.current.value;
 
-    const res = await fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          idToken: idtoken1,
-          displayName: fullName,
-          photoUrl: profile,
-          returnSecureToken: true,
-        }),
-        headers: {
-          "content-Type": "application/json",
-        },
-      }
-    );
-    let data;
-    if (res.ok) {
-      // console.log('apple', res.displayName)
-      setSuccess(true);
-      return res.json();
-    } else {
-      data = res.json();
-      let errorMessage = "Authentication failed";
+  //   const res = await fetch(
+  //     "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg",
+  //     {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         idToken: idtoken1,
+  //         displayName: fullName,
+  //         photoUrl: profile,
+  //         returnSecureToken: true,
+  //       }),
+  //       headers: {
+  //         "content-Type": "application/json",
+  //       },
+  //     }
+  //   );
+  //   let data;
+  //   if (res.ok) {
+  //     // console.log('apple', res.displayName)
+  //     setSuccess(true);
+  //     return res.json();
+  //   } else {
+  //     data = res.json();
+  //     let errorMessage = "Authentication failed";
 
-      alert(errorMessage);
-    }
-  };
+  //     alert(errorMessage);
+  //   }
+  // };
 
-  const verifyHandler = async (e) => {
-    e.preventDefault()
-    try{
-    let res = await axios.post(
-      "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg",
-      {
-        requestType: "VERIFY_EMAIL",
-        idToken: idtoken1,
-      }
-    );
+  // const verifyHandler = async (e) => {
+  //   e.preventDefault()
+  //   try{
+  //   let res = await axios.post(
+  //     "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg",
+  //     {
+  //       requestType: "VERIFY_EMAIL",
+  //       idToken: idtoken1,
+  //     }
+  //   );
  
    
-      setVerify(true);
-      console.log(res);
+  //     setVerify(true);
+  //     console.log(res);
       
-    } catch(error) {
-      console.log("error:", error);
-    }
-  };
+  //   } catch(error) {
+  //     console.log("error:", error);
+  //   }
+  // };
 
   const logOutHandler=()=>{
     setLogin(false)
@@ -167,7 +167,7 @@ const CompleteForm = () => {
             <button
               className="bg-red-500 rounded my-4 py-1 px-4 text-white font-medium"
               type="submit"
-              onClick={submitHandler}
+              // onClick={submitHandler}
             >
               Update
             </button>
@@ -175,7 +175,7 @@ const CompleteForm = () => {
             <button
               className="bg-red-500 rounded ml-3 my-4 py-1 px-4 text-white font-medium"
               type="submit"
-              onClick={verifyHandler}
+              // onClick={verifyHandler}
             >
               Verify Email
             </button>

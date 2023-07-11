@@ -38,17 +38,16 @@ const Dummy = () => {
     } else {
       if (editId === undefined) {
         try {
-          let result = await axios.post(
-            `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`,
+          let result = await axios.post('http://localhost:4000/expense/postdetails',
             {
               amount: amountRef.current.value,
               description: descRef.current.value,
               select: selectRef.current.value,
             }
           );
-          // console.log(result.data.name);
+          console.log(result.data);
 
-          setItems(result.data);
+          setItems(result.data.data);
           //  console.log(result.data.name)
           // amountRef.current.value = "";
           // descRef.current.value = "";
@@ -81,9 +80,9 @@ const Dummy = () => {
   const getData = async () => {
     try {
       let result = await axios.get(
-        `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}.json`
+        `http://localhost:4000/expense/getdetails`
       );
-      setItems(result.data);
+      setItems(result.data.expense);
     } catch (error) {
       console.log("error:", error);
     }
@@ -145,6 +144,7 @@ const Dummy = () => {
   //   a1.click()
   // }
   const csv = { data: newItems };
+  
   return (
     // bg color
 
@@ -158,7 +158,7 @@ const Dummy = () => {
 
       {/* div 2  , logged in */}
       {token && (
-        <div className="h-full ">
+        <div className="h-full bg-black">
           <div className=" h-full  px-10 py-10 w-full text-3xl">
             <div className="flex justify-between">
               <div> Welcome to Expense Tracker</div>
@@ -168,12 +168,12 @@ const Dummy = () => {
                 </p>
               </div>
             </div>
-            <div className="bg-black h-[1px] w-full "></div>
-            <div className="bg-gray-400 mx-10 my-5 h-full">
-              <header className="text-black font-bold text-center text-4xl  py-[60px]">
+            {/* <div className="bg-black h-[200px] w-full "></div> */}
+            <div className="bg-gray-400 mx-10 my-5 h-full w-[1700px]">
+              <header className="text-black font-bold text-center text-[40px]  py-[60px]">
                 Expense Form
               </header>
-              <div className="text-end mr-10 px-3 my-2 font-bold ">
+              <div className="text-end mr-10 px-2 my-1 font-bold ">
                 Total Expense:{total}
                 {total >= 10000 && (
                   <button
@@ -224,7 +224,7 @@ const Dummy = () => {
                 <div key={item.id}>
                   <Table striped bordered variant="dark">
                     <thead>
-                      <tr>
+                      <tr className="text-xl">
                         <th>Amount</th>
                         <th>Description</th>
                         <th>Category</th>
@@ -233,10 +233,10 @@ const Dummy = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>{item.amount}</td>
-                        <td>{item.description}</td>
-                        <td>{item.select}</td>
+                      <tr className="text-xl">
+                        <td >{item.Amount}</td>
+                        <td>{item.Description}</td>
+                        <td>{item.Categories}</td>
                         <td>
                           <button
                             className="bg-red-400 ml-4 rounded"
