@@ -1,4 +1,5 @@
 import React,{useRef, useState} from 'react'
+import axios from "axios"
 import { Button, Card, Form, FormControl, FormGroup, FormLabel } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import {useDispatch} from 'react-redux'
@@ -14,29 +15,26 @@ const LoginForm = () => {
         event.preventDefault()
         const emailValue=email.current.value
         const passwordValue=password.current.value
-        fetch('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg',{
-          method:"POST",
-          body:JSON.stringify({
+        axios.post('http://localhost:4000/login',{
+          
+        
               email:emailValue,
               password:passwordValue,
               returnSecureToken:true
-          }),
-          headers:{
-              "content-Type":"application/json"
-          }
+          
       }).then((res) => {
         
-        if (res.ok) {
+        if (res.status===200) {
         
           console.log('successful')
           console.log(res)
           navigate('/dummy')
-          return res.json();
+          return res;
         } else {
-          return res.json().then((data) => {
+          
             let errorMessage = "Authentication failed!";
-            throw new Error(data.error.message);
-          });
+            throw new Error(errorMessage);
+         
         }
       })
       .then((data) => {
