@@ -17,6 +17,7 @@ const Dummy = () => {
   const selectRef = useRef();
 
   const loctoken = localStorage.getItem("token");
+
   const emailId = localStorage.getItem("email");
   const email = emailId.replace("@", "").replace(".", "");
 
@@ -38,12 +39,14 @@ const Dummy = () => {
     } else {
       if (editId === undefined) {
         try {
-          let result = await axios.post('http://localhost:4000/expense/postdetails',
+          let result = await axios.post(
+            "http://localhost:5000/expense/postdetails",
             {
               amount: amountRef.current.value,
               description: descRef.current.value,
               select: selectRef.current.value,
-            }
+            },
+            { headers: { "Authorization": localStorage.getItem("token") } }
           );
           console.log(result.data);
 
@@ -79,9 +82,10 @@ const Dummy = () => {
   };
   const getData = async () => {
     try {
-      let result = await axios.get(
-        `http://localhost:4000/expense/getdetails`
-      );
+      let result = await axios.get(`http://localhost:5000/expense/getdetails`, {
+        headers: { "Authorization": localStorage.getItem("token") },
+      });
+      console.log(result.data);
       setItems(result.data.expense);
     } catch (error) {
       console.log("error:", error);
@@ -99,7 +103,7 @@ const Dummy = () => {
 
   useEffect(() => {
     getData();
-  }, [items]);
+  }, []);
 
   const editHandler = (amount, description, select) => {
     amountRef.current.value = amount;
@@ -117,19 +121,17 @@ const Dummy = () => {
 
   const deleteHandler =  (id) => {
     try {
-      
-      
-       axios.post(
-        `http://localhost:4000/expense/deleteDetails/${id}`, 
-      ).then((result)=>{
-       
-          getData()
-        
-      
-        
-      })
-    
-      
+      getData();
+
+
+     
+
+      let result =  axios.delete(
+        `http://localhost:5000/expense/deleteDetails/${id}`,{ headers: { "Authorization": localStorage.getItem("token") } }
+      )
+     
+      getData();
+      console.log(result)
     } catch (error) {
       console.log("error:", error);
     }
@@ -152,7 +154,7 @@ const Dummy = () => {
   //   a1.click()
   // }
   const csv = { data: newItems };
-  
+
   return (
     // bg color
 
@@ -242,7 +244,7 @@ const Dummy = () => {
                     </thead>
                     <tbody>
                       <tr className="text-xl">
-                        <td >{item.Amount}</td>
+                        <td>{item.Amount}</td>
                         <td>{item.Description}</td>
                         <td>{item.Categories}</td>
                         <td>
@@ -283,7 +285,12 @@ const Dummy = () => {
               >
                 Download Csv File
               </button> */}
-              <CSVLink className="text-m bg-white text-black rounded ml-[1490px] "{...csv}>Download File</CSVLink>
+              <CSVLink
+                className="text-m bg-white text-black rounded ml-[1490px] "
+                {...csv}
+              >
+                Download File
+              </CSVLink>
             </div>
           </div>
         </div>

@@ -16,8 +16,8 @@ export const UserLogin = (email, password) => async (dispatch) => {
       }
     );
     console.log(res);
-    dispatch({ type: USER_LOGIN_SUCCESS, payload: res.data.idToken });
-    localStorage.setItem("token", JSON.stringify(res.data.idToken));
+    dispatch({ type: USER_LOGIN_SUCCESS, payload: res.data.token });
+    localStorage.setItem("token", JSON.stringify(res.data.token));
     localStorage.setItem("email", JSON.stringify(res.data.email));
   } catch (error) {
     alert("Login Failed");

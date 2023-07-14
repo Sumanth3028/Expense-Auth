@@ -21,7 +21,7 @@ const SignUpForm = () => {
           setError(false)
           
          
-          let res= await fetch('http://localhost:4000/postDetails',{
+          let res= await fetch('http://localhost:5000/postDetails',{
             method:"POST",
             body:JSON.stringify({
                email:emailValue,

@@ -15,7 +15,7 @@ const LoginForm = () => {
         event.preventDefault()
         const emailValue=email.current.value
         const passwordValue=password.current.value
-        axios.post('http://localhost:4000/login',{
+        axios.post('http://localhost:5000/login',{
           
         
               email:emailValue,
@@ -23,9 +23,12 @@ const LoginForm = () => {
               returnSecureToken:true
           
       }).then((res) => {
-        
+        console.log(res)
         if (res.status===200) {
         
+          localStorage.setItem("token",res.data.token)
+          localStorage.setItem("email",res.data.email)
+
          alert('login Successful')
           navigate('/dummy')
           return res;
@@ -38,21 +41,19 @@ const LoginForm = () => {
       })
       .then((data) => {
          console.log(data)
-         localStorage.setItem("email" ,JSON.stringify(data.email))
-         localStorage.setItem("token",data.idToken)
         
       })
       .catch((error) => {
         alert(error.message);
       });
         
-      if(email==='' || password===''){
-        alert('please fill all fields')
-      }
-      else 
-      {
-        dispatch(UserLogin(emailValue,passwordValue))
-      }
+      // if(email==='' || password===''){
+      //   alert('please fill all fields')
+      // }
+      // else 
+      // {
+      //   dispatch(UserLogin(emailValue,passwordValue))
+      // }
     }
     
   return (
