@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
+
 import axios from "axios";
 import { useContext } from "react";
 import { ThemeContext } from "../Context/theme";
@@ -8,7 +9,9 @@ const Dummy = () => {
   const [items, setItems] = useState([]);
   const [editId, setEditId] = useState(undefined);
   const [token, setToken] = useState();
+  const[premium,setPremium]=useState(false)
   const ctx = useContext(ThemeContext);
+
 
   const amountRef = useRef();
 
@@ -28,6 +31,46 @@ const Dummy = () => {
 
     // console.log("hello");
   }, [token]);
+
+  
+  const razorpayHandler = async (e) => {
+    // const rzp1=new window.Razorpay("options")
+
+    // // rzp1.open()
+    const token = localStorage.getItem("token");
+
+    const response = await axios.get(
+      "http://localhost:5000/purchaseMembership",
+      { headers: { Authorization: token } }
+    );
+
+    console.log(response);
+
+    var options = {
+      "key": response.data.key_id,
+      "order_id": response.data.order.id,
+      "handler": async function (response) {
+        await axios.post(
+          "http://localhost:5000/updateMembership",
+          {
+            order_id: options.order_id,
+            payment_id: response.razorpay_payment_id,
+          },
+          { headers: { Authorization: token } }
+        );
+        setPremium(true)
+        alert("You are a premium user now")
+      },
+    };
+    const rzp1=new window.Razorpay(options)
+    rzp1.open()
+    e.preventDefault()
+
+    rzp1.on("payment.failed",function(response){
+      alert("something went wrong")
+    })
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
     if (
@@ -46,7 +89,7 @@ const Dummy = () => {
               description: descRef.current.value,
               select: selectRef.current.value,
             },
-            { headers: { "Authorization": localStorage.getItem("token") } }
+            { headers: { Authorization: localStorage.getItem("token") } }
           );
           console.log(result.data);
 
@@ -83,7 +126,7 @@ const Dummy = () => {
   const getData = async () => {
     try {
       let result = await axios.get(`http://localhost:5000/expense/getdetails`, {
-        headers: { "Authorization": localStorage.getItem("token") },
+        headers: { Authorization: localStorage.getItem("token") },
       });
       console.log(result.data);
       setItems(result.data.expense);
@@ -119,19 +162,17 @@ const Dummy = () => {
     }
   };
 
-  const deleteHandler =  (id) => {
+  const deleteHandler = (id) => {
     try {
       getData();
 
+      let result = axios.delete(
+        `http://localhost:5000/expense/deleteDetails/${id}`,
+        { headers: { Authorization: localStorage.getItem("token") } }
+      );
 
-     
-
-      let result =  axios.delete(
-        `http://localhost:5000/expense/deleteDetails/${id}`,{ headers: { "Authorization": localStorage.getItem("token") } }
-      )
-     
       getData();
-      console.log(result)
+      console.log(result);
     } catch (error) {
       console.log("error:", error);
     }
@@ -183,16 +224,20 @@ const Dummy = () => {
               <header className="text-black font-bold text-center text-[60px]  py-[60px]">
                 Expense Form
               </header>
+
               <div className="text-end mr-10 px-2 my-1 font-bold ">
                 Total Expense:{total}
-                {total >= 10000 && (
-                  <button
-                    onClick={ctx.handleTheme}
-                    className="ml-8 bg-white rounded py-2 text-black"
-                  >
-                    Activate Premium
-                  </button>
-                )}
+                {/* {total >= 10000 && ( */}
+                {!premium &&  <button
+                  // onClick={ctx.handleTheme}
+                  onClick={razorpayHandler}
+                  className="ml-8 bg-blue-300 rounded py-2 px-2 text-black text-xl"
+                >
+                  Activate Premium
+                </button> }
+               
+                {/* )} */}
+                {premium && <span className=" italic text-yellow-400"> premium </span>}
               </div>
 
               <form className="bg-red-400 rounded overflow-hidden py-5 ">

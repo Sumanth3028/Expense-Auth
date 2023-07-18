@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
-import { GoMarkGithub } from "react-icons/go";
+// import { GoMarkGithub } from "react-icons/go";
 import { HiGlobeAlt } from "react-icons/hi";
 import { useNavigate} from "react-router-dom";
 
@@ -142,7 +142,7 @@ const CompleteForm = () => {
           <form className=" w-[1000px] mx-10 my-3  font-bold">
             <div className="flex justify-between items-center">
               <div className="flex items-center ">
-                <GoMarkGithub className="text-2xl mx-2 px-0" />
+                {/* <GoMarkGithub className="text-2xl mx-2 px-0" /> */}
                 <label className="text-black">Full Name:</label>
                 <input
                   className="border-2 ml-5 rounded w-[350px] text-black"
