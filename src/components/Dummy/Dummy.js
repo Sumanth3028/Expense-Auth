@@ -1,17 +1,40 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
-
+import jwt from "jwt-decode";
 import axios from "axios";
 import { useContext } from "react";
 import { ThemeContext } from "../Context/theme";
 import { CSVLink } from "react-csv";
+import Modal from "../Modal/Modal";
 const Dummy = () => {
   const [items, setItems] = useState([]);
+  const [leaderBoardMembers, setLeaderBoardMembers] = useState([]);
   const [editId, setEditId] = useState(undefined);
   const [token, setToken] = useState();
-  const[premium,setPremium]=useState(false)
+  const [premium, setPremium] = useState(false);
   const ctx = useContext(ThemeContext);
 
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  const handleOpenModal = async () => {
+    setModalIsOpen(true);
+    let token = localStorage.getItem("token");
+    let res = await axios.get("http://localhost:5000/showLeaderBoard", {
+      headers: { Authorization: token },
+    });
+    
+    let result = res.data.userLeaderBoardDetails;
+    // console.log(result)
+    setLeaderBoardMembers([...result]);
+
+    // }
+  };
+
+  // console.log(leaderBoardMembers);
+
+  const handleCloseModal = () => {
+    setModalIsOpen(false);
+  };
 
   const amountRef = useRef();
 
@@ -28,11 +51,8 @@ const Dummy = () => {
     setTimeout(() => {
       setToken(loctoken);
     }, 0);
+  }, []);
 
-    // console.log("hello");
-  }, [token]);
-
-  
   const razorpayHandler = async (e) => {
     // const rzp1=new window.Razorpay("options")
 
@@ -47,10 +67,10 @@ const Dummy = () => {
     console.log(response);
 
     var options = {
-      "key": response.data.key_id,
-      "order_id": response.data.order.id,
-      "handler": async function (response) {
-        await axios.post(
+      key: response.data.key_id,
+      order_id: response.data.order.id,
+      handler: async function (response) {
+        const res = await axios.post(
           "http://localhost:5000/updateMembership",
           {
             order_id: options.order_id,
@@ -58,17 +78,18 @@ const Dummy = () => {
           },
           { headers: { Authorization: token } }
         );
-        setPremium(true)
-        alert("You are a premium user now")
+        setPremium(true);
+        alert("You are a premium user now");
+        localStorage.setItem("token", res.data.token);
       },
     };
-    const rzp1=new window.Razorpay(options)
-    rzp1.open()
-    e.preventDefault()
+    const rzp1 = new window.Razorpay(options);
+    rzp1.open();
+    e.preventDefault();
 
-    rzp1.on("payment.failed",function(response){
-      alert("something went wrong")
-    })
+    rzp1.on("payment.failed", function (response) {
+      alert("something went wrong");
+    });
   };
 
   const submitHandler = async (e) => {
@@ -128,8 +149,15 @@ const Dummy = () => {
       let result = await axios.get(`http://localhost:5000/expense/getdetails`, {
         headers: { Authorization: localStorage.getItem("token") },
       });
-      console.log(result.data);
+
       setItems(result.data.expense);
+      let decoded = jwt(loctoken);
+
+      let isAdmin = decoded.isPremiumUser;
+
+      if (isAdmin) {
+        setPremium(true);
+      }
     } catch (error) {
       console.log("error:", error);
     }
@@ -179,7 +207,7 @@ const Dummy = () => {
   };
 
   const total = newItems.reduce((accumulator, curNum) => {
-    return Number(curNum.amount) + accumulator;
+    return Number(curNum.Amount) + accumulator;
   }, 0);
 
   const makeCsv = (newItems) => {
@@ -225,20 +253,44 @@ const Dummy = () => {
                 Expense Form
               </header>
 
-              <div className="text-end mr-10 px-2 my-1 font-bold ">
-                Total Expense:{total}
+              <div className=" flex justify-between text-end ml-5 mr-10 px-2 my-1 font-bold ">
+                Total Expense: {total}
                 {/* {total >= 10000 && ( */}
-                {!premium &&  <button
-                  // onClick={ctx.handleTheme}
-                  onClick={razorpayHandler}
-                  className="ml-8 bg-blue-300 rounded py-2 px-2 text-black text-xl"
-                >
-                  Activate Premium
-                </button> }
-               
+                {!premium && (
+                  <button
+                    // onClick={ctx.handleTheme}
+                    onClick={razorpayHandler}
+                    className="ml-8 bg-blue-300 rounded py-2 px-2 text-black text-xl"
+                  >
+                    Activate Premium
+                  </button>
+                )}
                 {/* )} */}
-                {premium && <span className=" italic text-yellow-400"> premium </span>}
+                {premium && (
+                  <div className="flex">
+                    {" "}
+                    <span className=" bg-black text-3xl text-yellow-400 border-2 rounded-lg px-1 py-1  border-black">
+                      Premium
+                    </span>
+                    <button
+                      className="text-xl ml-5 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                      onClick={handleOpenModal}
+                    >
+                      Show LeaderBoard
+                    </button>
+                  </div>
+                )}
               </div>
+
+              <Modal isOpen={modalIsOpen} onClose={handleCloseModal}>
+                {" "}
+                {/* <h2 className="text-xl text-black font-bold mb-4">hey gusy</h2> */}
+                {leaderBoardMembers.map((mem)=>(
+                   <div className="text-xl text-black font-bold mb-4">
+                    <li>{mem.email}-{mem.total_expenses}</li>
+                   </div>
+                ))}
+              </Modal>
 
               <form className="bg-red-400 rounded overflow-hidden py-5 ">
                 <label className="mr-3 text-2xl ml-[80px]">Money Spent:</label>
