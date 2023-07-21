@@ -23,7 +23,7 @@ const Dummy = () => {
       headers: { Authorization: token },
     });
     
-    let result = res.data.userLeaderBoardDetails;
+    let result = res.data.users;
     // console.log(result)
     setLeaderBoardMembers([...result]);
 
@@ -92,7 +92,7 @@ const Dummy = () => {
     });
   };
 
-  const submitHandler = async (e) => {
+  const submitHandler = async (e,id) => {
     e.preventDefault();
     if (
       amountRef.current.value === "" ||
@@ -101,7 +101,7 @@ const Dummy = () => {
     ) {
       alert("please fill all fields");
     } else {
-      if (editId === undefined) {
+      
         try {
           let result = await axios.post(
             "http://localhost:5000/expense/postdetails",
@@ -123,25 +123,27 @@ const Dummy = () => {
         } catch (error) {
           console.log(error.message);
         }
-      } else {
-        console.log(editId);
+      
+      //  else {
+      //   console.log(editId);
 
-        try {
-          let res = await axios.put(
-            `https://expense-19d0e-default-rtdb.firebaseio.com/cart/${email}/${editId}.json`,
-            {
-              amount: amountRef.current.value,
-              description: descRef.current.value,
-              select: selectRef.current.value,
-            }
-          );
-          console.log(res);
-          getData();
-          setEditId(undefined);
-        } catch (error) {
-          console.log("error:", error);
-        }
-      }
+      //   try {
+      //     let res = await axios.get(
+      //       `http://localhost:5000/expense/editDetails/`,
+      //       {
+      //         amount: amountRef.current.value,
+      //         description: descRef.current.value,
+      //         select: selectRef.current.value,
+      //       },
+      //       { headers: { Authorization: localStorage.getItem("token") } }
+      //     );
+      //     console.log(res);
+      //     getData();
+      //     setEditId(undefined);
+      //   } catch (error) {
+      //     console.log("error:", error);
+      //   }
+      
     }
   };
   const getData = async () => {
@@ -176,18 +178,40 @@ const Dummy = () => {
     getData();
   }, []);
 
-  const editHandler = (amount, description, select) => {
-    amountRef.current.value = amount;
-    descRef.current.value = description;
-    selectRef.current.value = select;
+  const editHandler = async (amount,description,select) => {
+    let result
+    
+    try {
 
-    if (
-      amountRef.current.value === amount ||
-      descRef.current.value === description ||
-      selectRef.current.value === select
-    ) {
-      return;
-    }
+      
+         
+           result = await axios.put(
+            `http://localhost:5000/expense/editdetails`,{
+              amount: amount,
+              description:description,
+              select: select,
+            },{
+              headers:{"Authorization":localStorage.getItem("token")},
+            }
+            
+          );
+          console.log(result);
+          getData();
+          
+        } catch (error) {
+          console.log("error:", error);
+        }
+    amountRef.current.value = result.Amount;
+    descRef.current.value = result.Description;
+    selectRef.current.value = result.Categories;
+
+    // if (
+    //   amountRef.current.value === amount ||
+    //   descRef.current.value === description ||
+    //   selectRef.current.value === select
+    // ) {
+    //   return;
+    // }
   };
 
   const deleteHandler = (id) => {
@@ -336,7 +360,7 @@ const Dummy = () => {
                         <th>Description</th>
                         <th>Category</th>
                         <th>Delete Expense</th>
-                        <th>Edit Expense</th>
+                        {/* <th>Edit Expense</th> */}
                       </tr>
                     </thead>
                     <tbody>
@@ -352,21 +376,17 @@ const Dummy = () => {
                             Delete Expense
                           </button>
                         </td>
-                        <td>
+                        {/* <td>
                           <button
-                            onClick={() =>
-                              editHandler(
-                                item.amount,
-                                item.description,
-                                item.select,
-                                setEditId(item.id)
-                              )
+                            onClick={()=>
+                              editHandler(item.Amount,item.Description,item.Categories)
+                              
                             }
                             className="bg-red-400 ml-4 rounded"
                           >
                             Edit Expense
                           </button>
-                        </td>
+                        </td> */}
                       </tr>
                     </tbody>
                   </Table>
