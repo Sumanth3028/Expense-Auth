@@ -27,7 +27,7 @@ const ForgotPassword = () => {
     catch(error){
         alert(error.message)
     }
-    emailRef.current.value=""
+    // emailRef.current.value=""
     }
   return (
     <div className='bg-hero h-full py-[100px] items-start'>
