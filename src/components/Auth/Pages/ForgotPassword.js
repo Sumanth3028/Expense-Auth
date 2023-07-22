@@ -8,19 +8,21 @@ const ForgotPassword = () => {
     const navigate=useNavigate()
     const submitHandler=async(e)=>{
          e.preventDefault()
+         setSucess(true)
+         setTimeout(() => {
+          navigate('/login')
+        },2000)
          try{
          const email=emailRef.current.value
 
-        let response= await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCSf-ElfBk_z7q902i-D2AJidG1e6X6Vyg',{
-            requestType: "PASSWORD_RESET",
+        let response= await axios.post('http://localhost:5000/password/forgotPassword',{
+            
             email: email,
         })
 
         console.log(response)
-        setSucess(true)
-        setTimeout(() => {
-            navigate('/login')
-          },2000)
+        
+       
     }
     catch(error){
         alert(error.message)
