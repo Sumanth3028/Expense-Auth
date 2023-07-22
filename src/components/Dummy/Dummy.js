@@ -24,7 +24,7 @@ const Dummy = () => {
     });
     
     let result = res.data.users;
-    // console.log(result)
+    console.log(result)
     setLeaderBoardMembers([...result]);
 
     // }
@@ -311,7 +311,7 @@ const Dummy = () => {
                 {/* <h2 className="text-xl text-black font-bold mb-4">hey gusy</h2> */}
                 {leaderBoardMembers.map((mem)=>(
                    <div className="text-xl text-black font-bold mb-4">
-                    <li>{mem.email}-{mem.total_expenses}</li>
+                    <li>{mem.email}-{mem.Total_Expenses}</li>
                    </div>
                 ))}
               </Modal>
