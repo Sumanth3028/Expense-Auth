@@ -22,9 +22,9 @@ const Dummy = () => {
     let res = await axios.get("http://localhost:5000/showLeaderBoard", {
       headers: { Authorization: token },
     });
-    
+
     let result = res.data.users;
-    console.log(result)
+    console.log(result);
     setLeaderBoardMembers([...result]);
 
     // }
@@ -92,7 +92,7 @@ const Dummy = () => {
     });
   };
 
-  const submitHandler = async (e,id) => {
+  const submitHandler = async (e, id) => {
     e.preventDefault();
     if (
       amountRef.current.value === "" ||
@@ -101,29 +101,28 @@ const Dummy = () => {
     ) {
       alert("please fill all fields");
     } else {
-      
-        try {
-          let result = await axios.post(
-            "http://localhost:5000/expense/postdetails",
-            {
-              amount: amountRef.current.value,
-              description: descRef.current.value,
-              select: selectRef.current.value,
-            },
-            { headers: { Authorization: localStorage.getItem("token") } }
-          );
-          console.log(result.data);
+      try {
+        let result = await axios.post(
+          "http://localhost:5000/expense/postdetails",
+          {
+            amount: amountRef.current.value,
+            description: descRef.current.value,
+            select: selectRef.current.value,
+          },
+          { headers: { Authorization: localStorage.getItem("token") } }
+        );
+        console.log(result.data);
 
-          setItems(result.data.data);
-          //  console.log(result.data.name)
-          // amountRef.current.value = "";
-          // descRef.current.value = "";
-          // selectRef.current.value = "";
-          getData();
-        } catch (error) {
-          console.log(error.message);
-        }
-      
+        setItems(result.data.data);
+        //  console.log(result.data.name)
+        // amountRef.current.value = "";
+        // descRef.current.value = "";
+        // selectRef.current.value = "";
+        getData();
+      } catch (error) {
+        console.log(error.message);
+      }
+
       //  else {
       //   console.log(editId);
 
@@ -143,7 +142,6 @@ const Dummy = () => {
       //   } catch (error) {
       //     console.log("error:", error);
       //   }
-      
     }
   };
   const getData = async () => {
@@ -178,29 +176,26 @@ const Dummy = () => {
     getData();
   }, []);
 
-  const editHandler = async (amount,description,select) => {
-    let result
-    
-    try {
+  const editHandler = async (amount, description, select) => {
+    let result;
 
-      
-         
-           result = await axios.put(
-            `http://localhost:5000/expense/editdetails`,{
-              amount: amount,
-              description:description,
-              select: select,
-            },{
-              headers:{"Authorization":localStorage.getItem("token")},
-            }
-            
-          );
-          console.log(result);
-          getData();
-          
-        } catch (error) {
-          console.log("error:", error);
+    try {
+      result = await axios.put(
+        `http://localhost:5000/expense/editdetails`,
+        {
+          amount: amount,
+          description: description,
+          select: select,
+        },
+        {
+          headers: { Authorization: localStorage.getItem("token") },
         }
+      );
+      console.log(result);
+      getData();
+    } catch (error) {
+      console.log("error:", error);
+    }
     amountRef.current.value = result.Amount;
     descRef.current.value = result.Description;
     selectRef.current.value = result.Categories;
@@ -234,9 +229,9 @@ const Dummy = () => {
     return Number(curNum.Amount) + accumulator;
   }, 0);
 
-  const makeCsv = (newItems) => {
-    return newItems.map((r) => r).join("\n");
-  };
+  // const makeCsv = (newItems) => {
+  //   return newItems.map((r) => r).join("\n");
+  // };
 
   // const download=()=>{
   //   const a1=document.createElement('a1')
@@ -246,7 +241,13 @@ const Dummy = () => {
   //   console.log(a1)
   //   a1.click()
   // }
-  const csv = { data: newItems };
+  // const csv = { data: newItems };
+
+  const downloadHandler=async()=>{
+    let result = await axios.post('http://localhost:5000/expense/downloadExpenses')
+
+    console.log(result)
+  }
 
   return (
     // bg color
@@ -309,10 +310,12 @@ const Dummy = () => {
               <Modal isOpen={modalIsOpen} onClose={handleCloseModal}>
                 {" "}
                 {/* <h2 className="text-xl text-black font-bold mb-4">hey gusy</h2> */}
-                {leaderBoardMembers.map((mem)=>(
-                   <div className="text-xl text-black font-bold mb-4">
-                    <li>{mem.email}-{mem.Total_Expenses}</li>
-                   </div>
+                {leaderBoardMembers.map((mem) => (
+                  <div className="text-xl text-black font-bold mb-4">
+                    <li>
+                      {mem.email}-{mem.Total_Expenses}
+                    </li>
+                  </div>
                 ))}
               </Modal>
 
@@ -402,12 +405,14 @@ const Dummy = () => {
               >
                 Download Csv File
               </button> */}
-              <CSVLink
-                className="text-m bg-white text-black rounded ml-[1490px] "
-                {...csv}
-              >
-                Download File
-              </CSVLink>
+              {premium &&
+                <button
+                  className="text-m bg-white text-black rounded ml-[1490px] px-2 py-2 "
+                  onClick={downloadHandler}
+                >
+                  Download File
+                </button>
+              }
             </div>
           </div>
         </div>
