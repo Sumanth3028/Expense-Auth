@@ -12,6 +12,7 @@ const Dummy = () => {
   const [editId, setEditId] = useState(undefined);
   const [token, setToken] = useState();
   const [premium, setPremium] = useState(false);
+  const [downloadExpenses, setDownloadExpenses] = useState([]);
   const ctx = useContext(ThemeContext);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -51,6 +52,8 @@ const Dummy = () => {
     setTimeout(() => {
       setToken(loctoken);
     }, 0);
+    getData();
+   
   }, []);
 
   const razorpayHandler = async (e) => {
@@ -172,10 +175,6 @@ const Dummy = () => {
     newItems.push(obj);
   }
 
-  useEffect(() => {
-    getData();
-  }, []);
-
   const editHandler = async (amount, description, select) => {
     let result;
 
@@ -243,11 +242,33 @@ const Dummy = () => {
   // }
   // const csv = { data: newItems };
 
-  const downloadHandler=async()=>{
-    let result = await axios.post('http://localhost:5000/expense/downloadExpenses')
+  const getDownloadData = async () => {
+    let res = await axios.get(
+      "http://localhost:5000/expense/downloadExpenses",
+      { headers: { Authorization: localStorage.getItem("token") } }
+    );
+    console.log(res);
+    setDownloadExpenses((prevDownloadExpenses) => [
+      ...prevDownloadExpenses,
+      res.data.fileUrl,
+    ]);
+    console.log(downloadExpenses);
+    return res;
+  };
 
-    console.log(result)
-  }
+  const downloadHandler = async () => {
+    try {
+      let result = await getDownloadData();
+      const downloadLink = document.createElement("a");
+      downloadLink.href = result.data.fileUrl;
+      downloadLink.download = "expense.csv";
+      downloadLink.click();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // console.log(downloadExpenses);
 
   return (
     // bg color
@@ -395,6 +416,24 @@ const Dummy = () => {
                   </Table>
                 </div>
               ))}
+
+              <Table striped bordered variant="dark">
+                <thead>
+                  <tr className="text-xl">
+                    <th>Recent Downloads</th>
+                    {/* <th>Downloaded At</th> */}
+                  </tr>
+                </thead>
+                {downloadExpenses.map((expense, index) => (
+                  <tbody>
+                    <tr className="text-sm" key={index}>
+                      <td>
+                        <a href={expense}>{expense}</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                ))}
+              </Table>
             </div>
 
             <div>
@@ -405,18 +444,19 @@ const Dummy = () => {
               >
                 Download Csv File
               </button> */}
-              {premium &&
+              {premium && (
                 <button
                   className="text-m bg-white text-black rounded ml-[1490px] px-2 py-2 "
                   onClick={downloadHandler}
                 >
                   Download File
                 </button>
-              }
+              )}
             </div>
           </div>
         </div>
       )}
+      {/* <div><h1>hello</h1></div> */}
     </div>
   );
 };
