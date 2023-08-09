@@ -12,10 +12,16 @@ const Dummy = () => {
   const [editId, setEditId] = useState(undefined);
   const [token, setToken] = useState();
   const [premium, setPremium] = useState(false);
+  const [downloadExpenses, setDownloadExpenses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  
   const ctx = useContext(ThemeContext);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  // console.log("currentPage", currentPage);
 
+console.log(currentPage)
   const handleOpenModal = async () => {
     setModalIsOpen(true);
     let token = localStorage.getItem("token");
@@ -51,7 +57,11 @@ const Dummy = () => {
     setTimeout(() => {
       setToken(loctoken);
     }, 0);
-  }, []);
+
+    
+    getData()
+    // showPagination();
+  }, [currentPage]);
 
   const razorpayHandler = async (e) => {
     // const rzp1=new window.Razorpay("options")
@@ -111,7 +121,7 @@ const Dummy = () => {
           },
           { headers: { Authorization: localStorage.getItem("token") } }
         );
-        console.log(result.data);
+        // console.log(result.data);
 
         setItems(result.data.data);
         //  console.log(result.data.name)
@@ -144,13 +154,34 @@ const Dummy = () => {
       //   }
     }
   };
+
+  // const showPagination = async () => {
+  //   const response = await axios.get(
+  //     `http://localhost:5000/expense/getdetails?page=${page}`,
+  //     { headers: { Authorization: localStorage.getItem("token") } }
+  //   );
+  //   console.log(response);
+  // };
+
+ 
+
   const getData = async () => {
     try {
-      let result = await axios.get(`http://localhost:5000/expense/getdetails`, {
-        headers: { Authorization: localStorage.getItem("token") },
-      });
+      
+     
+      let result = await axios.get(
+        `http://localhost:5000/expense/getdetails?page=${currentPage}`,
+        {
+          headers: { Authorization: localStorage.getItem("token") },
+        }
+      );
+
+      console.log(result);
 
       setItems(result.data.expense);
+      setCurrentPage(result.data.currentPage);
+      
+      setTotalPages(result.data.totalPages);
       let decoded = jwt(loctoken);
 
       let isAdmin = decoded.isPremiumUser;
@@ -163,6 +194,20 @@ const Dummy = () => {
     }
   };
 
+
+  const previousPageHandler = async() => {
+
+   
+    setCurrentPage((prevPage)=>prevPage-1);
+    
+  };
+
+  const handleNextPage =async () => {
+
+    setCurrentPage((prevPage)=>prevPage+1);
+    
+  };
+
   const newItems = [];
   for (let key in items) {
     const obj = {
@@ -171,10 +216,6 @@ const Dummy = () => {
     };
     newItems.push(obj);
   }
-
-  useEffect(() => {
-    getData();
-  }, []);
 
   const editHandler = async (amount, description, select) => {
     let result;
@@ -219,7 +260,7 @@ const Dummy = () => {
       );
 
       getData();
-      console.log(result);
+     console.log(result)
     } catch (error) {
       console.log("error:", error);
     }
@@ -228,6 +269,8 @@ const Dummy = () => {
   const total = newItems.reduce((accumulator, curNum) => {
     return Number(curNum.Amount) + accumulator;
   }, 0);
+
+
 
   // const makeCsv = (newItems) => {
   //   return newItems.map((r) => r).join("\n");
@@ -243,11 +286,35 @@ const Dummy = () => {
   // }
   // const csv = { data: newItems };
 
-  const downloadHandler=async()=>{
-    let result = await axios.post('http://localhost:5000/expense/downloadExpenses')
+  const getDownloadData = async () => {
+    let res = await axios.get(
+      "http://localhost:5000/expense/downloadExpenses",
+      { headers: { Authorization: localStorage.getItem("token") } }
+    );
+    console.log(res);
+    setDownloadExpenses((prevDownloadExpenses) => [
+      ...prevDownloadExpenses,
+      res.data.fileUrl,
+    ]);
+    console.log(downloadExpenses);
+    return res;
+  };
 
-    console.log(result)
-  }
+  const downloadHandler = async () => {
+    try {
+      let result = await getDownloadData();
+      const downloadLink = document.createElement("a");
+      downloadLink.href = result.data.fileUrl;
+      downloadLink.download = "expense.csv";
+      downloadLink.click();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  
+  
+  // console.log(downloadExpenses);
 
   return (
     // bg color
@@ -308,8 +375,6 @@ const Dummy = () => {
               </div>
 
               <Modal isOpen={modalIsOpen} onClose={handleCloseModal}>
-                {" "}
-                {/* <h2 className="text-xl text-black font-bold mb-4">hey gusy</h2> */}
                 {leaderBoardMembers.map((mem) => (
                   <div className="text-xl text-black font-bold mb-4">
                     <li>
@@ -354,7 +419,7 @@ const Dummy = () => {
                 </button>
               </form>
 
-              {newItems.map((item) => (
+              {  newItems.map((item) => (
                 <div key={item.id}>
                   <Table striped bordered variant="dark">
                     <thead>
@@ -395,6 +460,24 @@ const Dummy = () => {
                   </Table>
                 </div>
               ))}
+
+              <Table striped bordered variant="dark">
+                <thead>
+                  <tr className="text-xl">
+                    <th>Recent Downloads</th>
+                    {/* <th>Downloaded At</th> */}
+                  </tr>
+                </thead>
+                {downloadExpenses.map((expense, index) => (
+                  <tbody>
+                    <tr className="text-sm" key={index}>
+                      <td>
+                        <a href={expense}>{expense}</a>
+                      </td>
+                    </tr>
+                  </tbody>
+                ))}
+              </Table>
             </div>
 
             <div>
@@ -405,14 +488,32 @@ const Dummy = () => {
               >
                 Download Csv File
               </button> */}
-              {premium &&
+              {premium && (
                 <button
                   className="text-m bg-white text-black rounded ml-[1490px] px-2 py-2 "
                   onClick={downloadHandler}
                 >
                   Download File
                 </button>
-              }
+              )}
+            </div>
+            <div className="flex justify-center">
+              {currentPage !== 1 && (
+                <button
+                  className=" border border-white px-1 py-1 bg-white text-black mr-4"
+                  onClick={previousPageHandler}
+                >
+                  Previous Page
+                </button>
+              )}
+              {currentPage !== totalPages && (
+                <button
+                  className=" border border-white px-1 py-1 bg-white text-black"
+                  onClick={handleNextPage}
+                >
+                  Next Page
+                </button>
+              )}
             </div>
           </div>
         </div>
