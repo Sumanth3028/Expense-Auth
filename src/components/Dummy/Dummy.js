@@ -15,13 +15,15 @@ const Dummy = () => {
   const [downloadExpenses, setDownloadExpenses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [pageSize,setPageSize]=useState(5)
   
   const ctx = useContext(ThemeContext);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
+ 
   // console.log("currentPage", currentPage);
+ 
 
-console.log(currentPage)
   const handleOpenModal = async () => {
     setModalIsOpen(true);
     let token = localStorage.getItem("token");
@@ -60,8 +62,9 @@ console.log(currentPage)
 
     
     getData()
+    
     // showPagination();
-  }, [currentPage]);
+  }, [currentPage,pageSize]);
 
   const razorpayHandler = async (e) => {
     // const rzp1=new window.Razorpay("options")
@@ -166,22 +169,24 @@ console.log(currentPage)
  
 
   const getData = async () => {
+   
     try {
+      localStorage.getItem('pageSize')
       
-     
       let result = await axios.get(
-        `http://localhost:5000/expense/getdetails?page=${currentPage}`,
+        `http://localhost:5000/expense/getdetails?page=${currentPage}&limit=${pageSize}`,
         {
           headers: { Authorization: localStorage.getItem("token") },
         }
       );
-
+     
       console.log(result);
 
       setItems(result.data.expense);
       setCurrentPage(result.data.currentPage);
       
       setTotalPages(result.data.totalPages);
+     
       let decoded = jwt(loctoken);
 
       let isAdmin = decoded.isPremiumUser;
@@ -207,6 +212,17 @@ console.log(currentPage)
     setCurrentPage((prevPage)=>prevPage+1);
     
   };
+
+  const pageSizeHandler=(e)=>{
+    localStorage.setItem('pageSize',JSON.stringify(pageSize))
+    const newPageSize = parseInt(e.target.value);
+    console.log(newPageSize)
+   
+   
+    setPageSize(newPageSize)
+    getData()
+    console.log("pageSize",pageSize)
+  }
 
   const newItems = [];
   for (let key in items) {
@@ -357,7 +373,14 @@ console.log(currentPage)
                     Activate Premium
                   </button>
                 )}
-                {/* )} */}
+                <div>
+                  <label>No Of Rows:</label>
+                  <select  className='text-black' onChange={pageSizeHandler} >
+                    <option id='1'>5</option>
+                    <option id='2'>10</option>
+                    <option id="3">15</option>
+                  </select>
+                </div>
                 {premium && (
                   <div className="flex">
                     {" "}
