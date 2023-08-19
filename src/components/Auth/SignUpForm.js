@@ -70,30 +70,30 @@ const SignUpForm = () => {
    
    
   return (
-    <div >
+    <div className="bg-hero-pattern h-[930px]  " >
    
-    <div className="py-20" >
-    <Card style={{ width:'50rem',height:'40rem',alignItems:'inherit',background:'azure',borderRadius:'20px',borderColor:'black',margin:'auto'}}>
-        <header style={{textAlign:'center',fontSize:'3rem',color:"black",borderRadius:'20px',marginTop:"2rem",fontFamily:'bold'}}>Sign Up</header>
+    <div className="px-7 py-[100px] " >
+    <Card style={{ width:'40rem',height:'40rem',alignItems:'inherit',borderRadius:'10px',borderColor:'black',margin:'auto'}} className="bg-transparent bg-opacity-90 backdrop-blur-lg rounded-md border ">
+        <header style={{textAlign:'center',fontSize:'2.5rem',color:"white",borderRadius:'20px',marginTop:"2rem",fontFamily:'bold'}}>Create Account</header>
       <Form style={{alignItems:'center',marginTop:'0.3rem'}}  onSubmit={submitHandler}>
         <FormGroup  controlId="formBasicEmail">
-          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'black'}}>Email Id:</FormLabel>
+          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'white' ,marginTop:'1rem'}}>Email Id:</FormLabel>
          
           <FormControl type="email"  placeholder="enter email" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={email} required></FormControl>
         </FormGroup>
         <FormGroup  controlId="formBasicPassword">
-          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'black'}}>Password:</FormLabel>
+          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'white'}}>Password:</FormLabel>
           <FormControl type="password" placeholder=" Enter password" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={password} required></FormControl>
         </FormGroup>
         <FormGroup  controlId="formBasicConfirmPassword">
-          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'black'}}>Confirm Password:</FormLabel>
+          <FormLabel style={{fontSize:'2rem',textAlign:'left',marginLeft:'3rem',color:'white'}}>Confirm Password:</FormLabel>
           <FormControl type="password"   placeholder=" Confirm password" style={{width:'80%',marginLeft:'3rem',padding:'1rem',marginBottom:'1rem'}} ref={confirm} required></FormControl>
           {error && <p style={{fontSize:'1rem',color:'red',marginLeft:'5rem'}}>Password and confirm password did'nt match</p>}
           {successful && <p style={{fontSize:'1rem',color:'blue',marginLeft:'5rem'}}>Account created successfully</p> }
         </FormGroup>
-       <Button variant="primary" type="submit" style={{marginTop:'2rem',marginLeft:'13rem',width:"40%",padding:'1rem'}}>Submit</Button>
+       <Button variant="primary" type="submit" style={{marginTop:'2rem',marginLeft:'11rem',width:"40%",padding:'1rem'}}>Submit</Button>
       </Form>
-      <p style={{fontSize:'20px',paddingTop:'46px',textAlign:'center',color:'white'}}>Already Have an Account? <a href="/login">Login</a></p>
+      <p style={{fontSize:'20px',paddingTop:'46px',textAlign:'center',color:'white',marginTop:'1.5rem'}}>Already Have an Account? <a href="/login">Login</a></p>
     </Card>
     
     </div>

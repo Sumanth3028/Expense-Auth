@@ -21,12 +21,12 @@ function App() {
     },
     dark: {
       color: "white",
-      background: "black",
+      background: "white",
     },
   };
   return (
     
-    <div style={value.theme === "dark" ? style.dark : style.light} className="h-[930px] py-[10px]">
+    <div style={value.theme === "dark" ? style.dark : style.light} className="h-full">
       <Routes>
         <Route path='/' element={<SignUpForm/>}></Route>
         <Route path='/login' element={<LoginForm/>}></Route>

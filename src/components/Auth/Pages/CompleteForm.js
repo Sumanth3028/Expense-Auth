@@ -103,7 +103,7 @@ const CompleteForm = () => {
 
   return (
     <div className=" bg-white h-full ">
-      <div className=" flex  px-10 py-10 w-full text-black text-xl italic justify-between">
+      <div className=" flex  px-10 py-10 sm:4 md:6 w-full text-black text-xl italic justify-between">
         <div>
           <p>Winners never quit, Quitters never win</p>
         </div>
