@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Table } from "react-bootstrap";
 import jwt from "jwt-decode";
 import axios from "axios";
@@ -15,14 +15,13 @@ const Dummy = () => {
   const [downloadExpenses, setDownloadExpenses] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageSize,setPageSize]=useState(5)
-  
+  const [pageSize, setPageSize] = useState(5);
+
   const ctx = useContext(ThemeContext);
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
- 
+
   // console.log("currentPage", currentPage);
- 
 
   const handleOpenModal = async () => {
     setModalIsOpen(true);
@@ -60,11 +59,10 @@ const Dummy = () => {
       setToken(loctoken);
     }, 0);
 
-    
-    getData()
-    
+    getData();
+
     // showPagination();
-  }, [currentPage,pageSize]);
+  }, [currentPage, pageSize]);
 
   const razorpayHandler = async (e) => {
     // const rzp1=new window.Razorpay("options")
@@ -166,27 +164,27 @@ const Dummy = () => {
   //   console.log(response);
   // };
 
- 
-
   const getData = async () => {
-   
     try {
-      localStorage.getItem('pageSize')
-      
+      localStorage.getItem("pageSize");
+
       let result = await axios.get(
         `http://localhost:5000/expense/getdetails?page=${currentPage}&limit=${pageSize}`,
         {
           headers: { Authorization: localStorage.getItem("token") },
         }
       );
-     
+
       console.log(result);
 
       setItems(result.data.expense);
+      console.log(items)
       setCurrentPage(result.data.currentPage);
-      
+
+
       setTotalPages(result.data.totalPages);
      
+
       let decoded = jwt(loctoken);
 
       let isAdmin = decoded.isPremiumUser;
@@ -199,30 +197,23 @@ const Dummy = () => {
     }
   };
 
-
-  const previousPageHandler = async() => {
-
-   
-    setCurrentPage((prevPage)=>prevPage-1);
-    
+  const previousPageHandler = async () => {
+    setCurrentPage((prevPage) => prevPage - 1);
   };
 
-  const handleNextPage =async () => {
-
-    setCurrentPage((prevPage)=>prevPage+1);
-    
+  const handleNextPage = async () => {
+    setCurrentPage((prevPage) => prevPage + 1);
   };
 
-  const pageSizeHandler=(e)=>{
-    localStorage.setItem('pageSize',JSON.stringify(pageSize))
+  const pageSizeHandler = (e) => {
+    localStorage.setItem("pageSize", JSON.stringify(pageSize));
     const newPageSize = parseInt(e.target.value);
-    console.log(newPageSize)
-   
-   
-    setPageSize(newPageSize)
-    getData()
-    console.log("pageSize",pageSize)
-  }
+    console.log(newPageSize);
+
+    setPageSize(newPageSize);
+    getData();
+    console.log("pageSize", pageSize);
+  };
 
   const newItems = [];
   for (let key in items) {
@@ -276,7 +267,7 @@ const Dummy = () => {
       );
 
       getData();
-     console.log(result)
+      console.log(result);
     } catch (error) {
       console.log("error:", error);
     }
@@ -285,8 +276,6 @@ const Dummy = () => {
   const total = newItems.reduce((accumulator, curNum) => {
     return Number(curNum.Amount) + accumulator;
   }, 0);
-
-
 
   // const makeCsv = (newItems) => {
   //   return newItems.map((r) => r).join("\n");
@@ -312,7 +301,7 @@ const Dummy = () => {
       ...prevDownloadExpenses,
       res.data.fileUrl,
     ]);
-    console.log(downloadExpenses);
+
     return res;
   };
 
@@ -328,8 +317,6 @@ const Dummy = () => {
     }
   };
 
-  
-  
   // console.log(downloadExpenses);
 
   return (
@@ -345,10 +332,10 @@ const Dummy = () => {
 
       {/* div 2  , logged in */}
       {token && (
-        <div className="h-full bg-black">
-          <div className=" h-full  px-10 py-10 w-full text-3xl">
+        <div className="h-full bg-gray-100 text-black">
+          <div className=" h-full  px-10 py-10 w-full text-3xl sm:text-xl md:text-2xl">
             <div className="flex justify-between">
-              <div> Welcome to Expense Tracker</div>
+              <div > Welcome to Expense Tracker</div>
               <div className=" text-xl ">
                 <p>
                   Your Profile is Incomplete.<a href="/profile">Complete Now</a>
@@ -356,8 +343,8 @@ const Dummy = () => {
               </div>
             </div>
             {/* <div className="bg-black h-[200px] w-full "></div> */}
-            <div className="bg-gray-400 mx-10 my-5 h-full w-[1700px]">
-              <header className="text-black font-bold text-center text-[60px]  py-[60px]">
+            <div className="bg-gray-100 mx-2 md:mx-5 my-2 md:my-5 lg:m-0 lg:h-full lg:w-1700px ">
+              <header className="text-black font-bold text-center text-[60px]  py-[60px] ">
                 Expense Form
               </header>
 
@@ -373,22 +360,27 @@ const Dummy = () => {
                     Activate Premium
                   </button>
                 )}
-                <div>
-                  <label>No Of Rows:</label>
-                  <select  className='text-black' onChange={pageSizeHandler} >
-                    <option id='1'>5</option>
-                    <option id='2'>10</option>
-                    <option id="3">15</option>
-                  </select>
-                </div>
+                {premium && (
+                  <div>
+                    <label className="mr-3">No Of Rows:</label>
+                    <select
+                      className="text-black rounded-lg border border-black"
+                      onChange={pageSizeHandler}
+                    >
+                      <option id="1">5</option>
+                      <option id="2">10</option>
+                      <option id="3">15</option>
+                    </select>
+                  </div>
+                )}
                 {premium && (
                   <div className="flex">
                     {" "}
-                    <span className=" bg-black text-3xl text-yellow-400 border-2 rounded-lg px-1 py-1  border-black">
+                    <span className=" bg-black text-3xl sm:text-xl md:text-2xl text-yellow-400 border-2 rounded-lg px-1 py-1   border-black">
                       Premium
                     </span>
                     <button
-                      className="text-xl ml-5 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+                      className="text-xl ml-5 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4  rounded"
                       onClick={handleOpenModal}
                     >
                       Show LeaderBoard
@@ -399,7 +391,7 @@ const Dummy = () => {
 
               <Modal isOpen={modalIsOpen} onClose={handleCloseModal}>
                 {leaderBoardMembers.map((mem) => (
-                  <div className="text-xl text-black font-bold mb-4">
+                  <div className="text-l text-black font-bold mb-4 sm:text-sm">
                     <li>
                       {mem.email}-{mem.Total_Expenses}
                     </li>
@@ -407,7 +399,7 @@ const Dummy = () => {
                 ))}
               </Modal>
 
-              <form className="bg-red-400 rounded overflow-hidden py-5 ">
+              <form className="bg-blue-400 rounded overflow-hidden py-5 mt-3 ">
                 <label className="mr-3 text-2xl ml-[80px]">Money Spent:</label>
                 <input
                   type="number"
@@ -422,10 +414,12 @@ const Dummy = () => {
                   ref={descRef}
                   required
                 ></input>
-                <label className="mr-3 text-2xl">Select Category:</label>
+                <label className="mr-3 text-2xl sm:text-l ">
+                  Select Category:
+                </label>
                 <select
                   ref={selectRef}
-                  className=" mr-14  w-[210px] h-[40px] text-black"
+                  className=" mr-14  w-[210px] h-[40px] rounded text-black"
                   required
                 >
                   <option value="Food">Food</option>
@@ -442,26 +436,26 @@ const Dummy = () => {
                 </button>
               </form>
 
-              {  newItems.map((item) => (
-                <div key={item.id}>
-                  <Table striped bordered variant="dark">
+              {newItems.map((item) => (
+                <Fragment key={item.id}>
+                  <Table striped bordered variant="dark" className="mb-0">
                     <thead>
                       <tr className="text-xl">
-                        <th>Amount</th>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Delete Expense</th>
+                        <th className="w-[25%]">Amount</th>
+                        <th className="w-[25%]">Description</th>
+                        <th className="w-[25%]">Category</th>
+                        <th className="w-[25%]">Delete Expense</th>
                         {/* <th>Edit Expense</th> */}
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="text-xl">
+                      <tr className="text-xl ">
                         <td>{item.Amount}</td>
-                        <td>{item.Description}</td>
-                        <td>{item.Categories}</td>
+                        <td >{item.Description}</td>
+                        <td >{item.Categories}</td>
                         <td>
                           <button
-                            className="bg-red-400 ml-4 rounded"
+                            className="bg-red-600 ml-4 rounded"
                             onClick={() => deleteHandler(item.id)}
                           >
                             Delete Expense
@@ -481,7 +475,7 @@ const Dummy = () => {
                       </tr>
                     </tbody>
                   </Table>
-                </div>
+                </Fragment>
               ))}
 
               <Table striped bordered variant="dark">
@@ -513,7 +507,7 @@ const Dummy = () => {
               </button> */}
               {premium && (
                 <button
-                  className="text-m bg-white text-black rounded ml-[1490px] px-2 py-2 "
+                  className="text-m bg-white text-black rounded ml-[1490px] px-2 py-2 border border-black "
                   onClick={downloadHandler}
                 >
                   Download File
@@ -529,7 +523,7 @@ const Dummy = () => {
                   Previous Page
                 </button>
               )}
-              {currentPage !== totalPages && (
+              { currentPage !== totalPages && (
                 <button
                   className=" border border-white px-1 py-1 bg-white text-black"
                   onClick={handleNextPage}
